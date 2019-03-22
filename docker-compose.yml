@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+
+  feature:
+    container_name: feature
+    restart: always
+    build: ./main
+    ports:
+      - "8000:8000"
+    command: gunicorn -w 1 -b :8000 wsgi:app
+    depends_on:
+      - db
+
+
+  nginx:
+    container_name: nginx
+    restart: always
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - feature
+
+  db:
+    image: postgres
+    container_name: db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: feature
+    volumes:
+      - pg_data_docker:/var/lib/postgresql/data
+
+volumes:
+  pg_data_docker:

@@ -1,0 +1,37 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Request Feature{% endblock %}
+{% block content %}
+
+<div class="wrapper">
+    <div class="create-button"> <a href="{{ url_for('home.create_request')}}" class="btn btn-primary">Create</a></div>
+    <h3 class="request-header">Feature Requests</h3>
+    {% if feature_requests|length > 0 %}
+    <div class="request-display">
+        {% for request in feature_requests %}
+            <a href="{{ url_for('home.edit_request', request_id=request.id )}}">
+                <div class="row request-card">
+                    <div class="col-md-6">
+                        <p>
+                            <b>Id: #{{ request.shortened_id }}</b> &nbsp;&nbsp;
+                            <b>Title:</b> {{ request.title }}
+                        </p>
+                        <p>
+                            <b>Client:</b> {{ request.request_client.name}} &nbsp;&nbsp;
+                            <b>priority:</b> {{ request.client_priority }}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="left">
+                            <b>Status:</b> <span class="badge badge-success">{{ request.request_status }}</span>
+                            <b><a href="{{ url_for('home.delete_request', request_id=request.id)}}"><i class="fa fa-trash"></i></a></b>
+                        </p>
+                    </div>
+                </div>
+            </a>
+          {% endfor %}
+    </div>
+    {% else %}
+    <small>You do not have any feature request.</small>
+    {% endif %}
+</div>
+{% endblock %}

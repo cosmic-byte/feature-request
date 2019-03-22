@@ -1,0 +1,17 @@
+[
+    {
+        "table": "home_client",
+        "records": [{
+            "id": "5a8659c4-e401-43d6-b501-27ea4d6db628",
+            "name": "Client A"
+        },
+        {
+            "id": "5a8659c4-e401-43d6-b501-27ea4d6db629",
+            "name": "Client B"
+        },
+        {
+            "id": "5a8659c4-e401-43d6-b501-27ea4d6db630",
+            "name": "Client C"
+        }]
+    }
+]

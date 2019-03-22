@@ -1,0 +1,36 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Request Feature{% endblock %}
+{% block content %}
+<div class="request-card">
+    <form action="{{ url_for('home.edit_request', request_id=request_id)}}" method=post>
+        {{ form.hidden_tag() }}
+        <h2 class="request-header">Submit a Feature Request</h2>
+        <div class="form-group">
+          <label>Title</label>
+          {{ form.title(class='form-control') }}
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+          {{ form.description(class='form-control') }}
+        </div>
+        <div class="form-group">
+            <label>Client</label>
+          {{ form.client(class='form-control') }}
+        </div>
+        <div class="form-group">
+            <label>Client Priority</label>
+          {{ form.client_priority(class='form-control') }}
+        </div>
+        <div class="form-group">
+            <label>Target Date</label>
+          {{ form.target_date(class='form-control') }}
+        </div>
+        <div class="form-group">
+            <label>Product Area</label>
+          {{ form.product_area(class='form-control') }}
+        </div>
+
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+</div>
+{% endblock %}
