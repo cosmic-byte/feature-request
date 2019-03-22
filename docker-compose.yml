@@ -7,7 +7,7 @@ services:
     restart: always
     build: ./main
     environment:
-      DATABASE_URL: 'postgresql+psycopg2://postgres:postgres@localhost:5432/feature_db'
+      DATABASE_URL: 'postgresql+psycopg2://postgres:postgres@db:5432/feature'
     ports:
       - "8001:8000"
     command: gunicorn -w 1 -b :8000 wsgi:app
@@ -31,7 +31,7 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
-      POSTGRES_DB: feature_db
+      POSTGRES_DB: feature
     volumes:
       - pg_data_docker:/var/lib/postgresql/data
 
