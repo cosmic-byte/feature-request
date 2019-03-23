@@ -8,6 +8,7 @@ services:
     build: ./main
     environment:
       DATABASE_URL: 'postgresql+psycopg2://postgres:postgres@db:5432/feature'
+      SERVER_NAME: 'http://138.68.133.130'
     ports:
       - "8001:8000"
     command: gunicorn -w 4 -b :8000 wsgi:app
