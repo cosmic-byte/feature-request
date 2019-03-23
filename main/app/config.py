@@ -7,13 +7,13 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'my_precious_secret_key')
-    SERVER_NAME = os.getenv('SERVER_NAME', 'localhost')
     DEBUG = False
 
 
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    WTF_CSRF_CHECK_DEFAULT = False
     if postgres_database_url:
         SQLALCHEMY_DATABASE_URI = postgres_database_url
     else:

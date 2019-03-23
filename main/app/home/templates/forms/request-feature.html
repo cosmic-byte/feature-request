@@ -3,7 +3,7 @@
 {% block content %}
 <div class="request-card">
     <form action="{{ url_for('home.create_request')}}" method=post>
-        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
         <h2 class="request-header">Submit a Feature Request</h2>
         <div class="form-group">
           <label>Title</label>
