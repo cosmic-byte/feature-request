@@ -7,6 +7,7 @@ from app import flask_bcrypt, db
 from app.auth.auth_helper import is_safe_url
 from app.auth.forms import LoginForm
 from app.auth.model import User
+from app.util import save_changes
 
 app = Blueprint('auth', __name__, template_folder='templates',
                 static_folder='static')
@@ -25,7 +26,7 @@ def login():
             if flask_bcrypt.check_password_hash(user.password, form.password.data):
                 user.authenticated = True
                 db.session.add(user)
-                db.session.commit()
+                save_changes(db.session)
                 login_user(user, remember=True)
 
                 next_page = flask.request.args.get('next')
@@ -45,6 +46,6 @@ def logout():
     user = current_user
     user.authenticated = False
     db.session.add(user)
-    db.session.commit()
+    save_changes(db.session)
     logout_user()
     return redirect(url_for('auth.login'))

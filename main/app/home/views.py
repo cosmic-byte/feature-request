@@ -5,6 +5,7 @@ from werkzeug.utils import redirect
 from app import db
 from app.home.forms import FeatureRequestForm
 from app.home.model import Client, Feature
+from app.util import save_changes
 
 app = Blueprint('home', __name__, template_folder='templates',
                 static_folder='static')
@@ -13,13 +14,14 @@ app = Blueprint('home', __name__, template_folder='templates',
 @app.route('/')
 @login_required
 def home():
+    request_status = dict(Feature.REQUEST_STATUS)
     feature_requests = Feature.query.filter_by(
         requested_by=str(current_user.id),
         deleted=False
     ).order_by('client_priority').all()
     for feature in feature_requests:
         feature.request_client = Client.query.get(feature.client)
-        feature.request_status = dict(Feature.REQUEST_STATUS)[feature.request_status]
+        feature.status = request_status[feature.request_status]
     return render_template('pages/home.html', feature_requests=feature_requests)
 
 
@@ -53,7 +55,7 @@ def create_request():
 
             previous_requests_for_client = previous_requests_for_client[::-1]
             db.session.bulk_save_objects(previous_requests_for_client)
-            db.session.commit()
+            save_changes(db.session)
 
         feature = Feature(
             requested_by=str(current_user.id),
@@ -61,7 +63,7 @@ def create_request():
             **data
         )
         db.session.add(feature)
-        db.session.commit()
+        save_changes(db.session)
         flash('Feature request created successfully!')
         return redirect(url_for('home.home'))
     return render_template('forms/request-feature.html', form=feature_form)
@@ -79,7 +81,7 @@ def edit_request(request_id):
             for key, value in data.items():
                 setattr(feature_request, key, value)
             db.session.add(feature_request)
-            db.session.commit()
+            save_changes(db.session)
             flash('Feature request updated successfully!')
             return redirect(url_for('home.home'))
         return render_template('forms/edit-request-feature.html', form=feature_form, request_id=request_id)
@@ -93,6 +95,6 @@ def delete_request(request_id):
     feature_request = Feature.query.get(str(request_id))
     feature_request.deleted = True
     db.session.add(feature_request)
-    db.session.commit()
+    save_changes(db.session)
     flash('Feature deleted successfully!')
     return redirect(url_for('home.home'))

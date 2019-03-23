@@ -6,14 +6,14 @@
      <div class="login">
       <div class="login-screen">
         <div class="app-title">
-          <h3 class="form-heading">Login <a href="/" title="Back to homepage"><i class="fa fa-home pull-right"></i></a></h3>
+          <h3 class="form-heading">Login <a href="/" title="Back to homepage"></a></h3>
         </div>
         <div class="login-form">
-          <div class="control-group">
-            {{ form.email(class_ = 'login-field', placeholder = form.email.label.text, required = true, autofocus = true) }}
+          <div class="form-group">
+            {{ form.email(class_='form-control', placeholder = form.email.label.text, required = true, autofocus = true) }}
           </div>
-          <div class="control-group">
-            {{ form.password(class_ = 'login-field last-input', placeholder = form.password.label.text, required = true) }}
+          <div class="form-group">
+            {{ form.password(class_='form-control last-input', placeholder = form.password.label.text, required = true) }}
           </div>
           <input type="submit" value="Log in" class="btn btn-primary btn-large btn-block">
         </div>

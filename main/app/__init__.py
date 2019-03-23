@@ -6,7 +6,7 @@ from flask_wtf import CSRFProtect
 
 from .config import config_by_name
 
-db = SQLAlchemy()
+db = SQLAlchemy(session_options={"autoflush": False})
 flask_bcrypt = Bcrypt()
 login_manager = LoginManager()
 csrf = CSRFProtect()

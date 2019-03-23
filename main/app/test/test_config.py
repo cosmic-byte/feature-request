@@ -4,7 +4,7 @@ import unittest
 from flask import current_app
 from flask_testing import TestCase
 
-from main.manage import app
+from manage import app
 from app.config import basedir
 
 

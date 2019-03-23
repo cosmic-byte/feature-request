@@ -3,6 +3,7 @@ import unittest
 from app import flask_bcrypt, db
 from app.auth.model import User
 from app.test.base import BaseTestCase
+from app.util import save_changes
 
 
 class TestAuthModels(BaseTestCase):
@@ -13,7 +14,7 @@ class TestAuthModels(BaseTestCase):
         user3 = User(email='test3@gmail.com', first_name='susan', last_name='daniel', password='mum')
 
         db.session.add_all([user1, user2, user3])
-        db.session.commit()
+        save_changes(db.session)
 
         users = User.query.all()
         self.assertEqual(len(users), 3)

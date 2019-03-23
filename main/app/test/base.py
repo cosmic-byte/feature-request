@@ -5,7 +5,8 @@ from flask_testing import TestCase
 from app import db
 from app.auth.model import User
 from app.home.model import Client, Feature
-from main.manage import app
+from app.util import save_changes
+from manage import app
 
 
 class BaseTestCase(TestCase):
@@ -17,7 +18,7 @@ class BaseTestCase(TestCase):
 
     def setUp(self):
         db.create_all()
-        db.session.commit()
+        save_changes(db.session)
 
     def tearDown(self):
         db.session.remove()
@@ -32,14 +33,14 @@ def get_user(email: str, password: str):
         password=password
     )
     db.session.add(user)
-    db.session.commit()
+    save_changes(db.session)
     return user
 
 
 def get_client(name: str) -> Client:
     client = Client(name=name)
     db.session.add(client)
-    db.session.commit()
+    save_changes(db.session)
     return client
 
 
@@ -54,5 +55,5 @@ def get_feature_request(title: str, client: Client, user: User, priority: int):
         product_area=Feature.PRODUCT_AREA_POLICIES
     )
     db.session.add(feature)
-    db.session.commit()
+    save_changes(db.session)
     return feature

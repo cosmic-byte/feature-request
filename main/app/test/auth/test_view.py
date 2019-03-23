@@ -5,12 +5,13 @@ from flask import url_for
 from app import db
 from app.auth.model import User
 from app.test.base import BaseTestCase
+from app.util import save_changes
 
 
 def create_test_user():
     user = User(email='test@gmail.com', first_name='susan', last_name='daniel', password='mum')
     db.session.add(user)
-    db.session.commit()
+    save_changes(db.session)
     return user
 
 

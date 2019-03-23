@@ -1,11 +1,11 @@
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import SelectField
 from wtforms_alchemy import ModelForm
 
 from app.home.model import Feature, Client
 
 
-class FeatureRequestForm(ModelForm, Form):
+class FeatureRequestForm(ModelForm, FlaskForm):
     client = SelectField(coerce=str)
     product_area = SelectField(
         choices=Feature.PRODUCT_AREAS,

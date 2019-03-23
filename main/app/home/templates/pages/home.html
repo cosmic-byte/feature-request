@@ -22,7 +22,7 @@
                     </div>
                     <div class="col-md-6">
                         <p class="left">
-                            <b>Status:</b> <span class="badge badge-success">{{ request.request_status }}</span>
+                            <b>Status:</b> <span class="badge badge-success">{{ request.status }}</span>
                             <b><a href="{{ url_for('home.delete_request', request_id=request.id)}}"><i class="fa fa-trash"></i></a></b>
                         </p>
                     </div>
