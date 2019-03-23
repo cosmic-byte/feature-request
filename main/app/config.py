@@ -13,7 +13,7 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    WTF_CSRF_CHECK_DEFAULT = False
+    WTF_CSRF_ENABLED = False
     if postgres_database_url:
         SQLALCHEMY_DATABASE_URI = postgres_database_url
     else:
