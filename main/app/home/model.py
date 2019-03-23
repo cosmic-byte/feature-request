@@ -9,9 +9,6 @@ from app import db
 class Feature(db.Model):
     """Model for tracking feature requests."""
     __tablename__ = "home_feature"
-    __table_args__ = (
-        db.UniqueConstraint('client', 'client_priority', name='unique_client_feature_priority'),
-    )
 
     REQUEST_STATUS_PENDING = 0
     REQUEST_STATUS_APPROVED = 1
