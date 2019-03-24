@@ -3,8 +3,6 @@
 clean:
 	find . -type f -name '*.pyc' -delete
 	find . -type f -name '*.log' -delete
-	docker-compose down
-	docker system prune -fa
 
 python-packages:
 	pip install -r requirements.txt
