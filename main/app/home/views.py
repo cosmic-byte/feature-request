@@ -14,6 +14,10 @@ app = Blueprint('home', __name__, template_folder='templates',
 @app.route('/')
 @login_required
 def home():
+    """
+    Home view for listing feature requests.
+    :return:
+    """
     request_status = dict(Feature.REQUEST_STATUS)
     feature_requests = Feature.query.filter_by(
         requested_by=str(current_user.id),
@@ -28,34 +32,15 @@ def home():
 @app.route('/create-request', methods=['GET', 'POST'])
 @login_required
 def create_request():
+    """
+    View for creating a feature request.
+    :return:
+    """
     feature_form = FeatureRequestForm(request.form)
     if request.method == 'POST' and feature_form.validate_on_submit():
         data = {**feature_form.data}
         _ = data.pop('csrf_token', None)
-        client_id = data.get('client')
-        previous_requests_for_client = Feature.query.filter(
-            Feature.client_priority >= data['client_priority']
-        ).filter_by(
-            client=client_id,
-            deleted=False
-        ).order_by('client_priority').all()
-
-        assigned_request_priority = Feature.query.filter_by(
-            client_priority=data['client_priority'],
-            client=client_id,
-            deleted=False
-        ).all()
-
-        if assigned_request_priority:
-            last_changed = data['client_priority']
-            for previous_request in previous_requests_for_client:
-                if previous_request.client_priority == last_changed:
-                    previous_request.client_priority += 1
-                    last_changed = previous_request.client_priority
-
-            previous_requests_for_client = previous_requests_for_client[::-1]
-            db.session.bulk_save_objects(previous_requests_for_client)
-            save_changes(db.session)
+        review_client_feature_priorities(data)
 
         feature = Feature(
             requested_by=str(current_user.id),
@@ -72,12 +57,18 @@ def create_request():
 @app.route('/edit-request/<request_id>', methods=['GET', 'POST', 'PUT', 'PATCH'])
 @login_required
 def edit_request(request_id):
+    """
+    View for editing a feature request.
+    :param request_id:
+    :return:
+    """
     feature_request = Feature.query.filter_by(id=str(request_id), requested_by=str(current_user.id)).first()
     if feature_request:
         feature_form = FeatureRequestForm(obj=feature_request, formdata=request.form)
         if request.method in ['POST', 'PUT', 'PATCH'] and feature_form.validate_on_submit():
             data = {**feature_form.data}
             _ = data.pop('csrf_token', None)
+            review_client_feature_priorities(data)
             for key, value in data.items():
                 setattr(feature_request, key, value)
             db.session.add(feature_request)
@@ -92,9 +83,44 @@ def edit_request(request_id):
 @app.route('/delete-request/<request_id>', methods=['GET'])
 @login_required
 def delete_request(request_id):
+    """
+    View for deleting a feature request.
+    :param request_id:
+    :return:
+    """
     feature_request = Feature.query.get(str(request_id))
     feature_request.deleted = True
     db.session.add(feature_request)
     save_changes(db.session)
     flash('Feature deleted successfully!')
     return redirect(url_for('home.home'))
+
+
+def review_client_feature_priorities(data):
+    """
+    Method for checking and reordering of previous client feature request priorities.
+    :param data:
+    :return:
+    """
+    client_id = data.get('client')
+    previous_requests_for_client = Feature.query.filter(
+        Feature.client_priority >= data['client_priority']
+    ).filter_by(
+        client=client_id,
+        deleted=False
+    ).order_by('client_priority').all()
+    assigned_request_priority = Feature.query.filter_by(
+        client_priority=data['client_priority'],
+        client=client_id,
+        deleted=False
+    ).all()
+    if assigned_request_priority:
+        last_changed = data['client_priority']
+        for previous_request in previous_requests_for_client:
+            if previous_request.client_priority == last_changed:
+                previous_request.client_priority += 1
+                last_changed = previous_request.client_priority
+
+        previous_requests_for_client = previous_requests_for_client[::-1]
+        db.session.bulk_save_objects(previous_requests_for_client)
+        save_changes(db.session)

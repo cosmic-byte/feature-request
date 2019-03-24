@@ -178,6 +178,36 @@ class TestFeatureRequestViews(BaseTestCase):
         self.assertEqual(feature_request_updated.client, feature_request.client)
         self.assertEqual(feature_request_updated.target_date, feature_request.target_date)
 
+    def test_edit_feature_request_for_same_client_with_repeated_priority_should_reorder_priorities(self):
+        """ Test create feature request."""
+        user = get_user('admin@admin.com', 'password')
+        client = self.login_user(user)
+
+        request_client = get_client(name='Client A')
+
+        get_feature_request(title='Feature A', client=request_client, user=user, priority=1)
+        get_feature_request(title='Feature B', client=request_client, user=user, priority=2)
+        get_feature_request(title='Feature C', client=request_client, user=user, priority=3)
+        feature_request = get_feature_request(title='Feature D', client=request_client, user=user, priority=4)
+
+        edit_data = FeatureRequestForm(obj=feature_request).data
+        edit_data['description'] = 'This is a different description'
+        edit_data['client_priority'] = 1
+
+        url = url_for('home.edit_request', request_id=str(feature_request.id))
+        response = client.patch(url, data=edit_data)
+        self.assertRedirects(response, url_for('home.home'))
+
+        feature_a = Feature.query.filter_by(title='Feature A').first()
+        feature_b = Feature.query.filter_by(title='Feature B').first()
+        feature_c = Feature.query.filter_by(title='Feature C').first()
+        feature_d = Feature.query.filter_by(title='Feature D').first()
+
+        self.assertEqual(feature_a.client_priority, 2)
+        self.assertEqual(feature_b.client_priority, 3)
+        self.assertEqual(feature_c.client_priority, 4)
+        self.assertEqual(feature_d.client_priority, 1)
+
     def test_delete_feature_request_success(self):
         """ Test delete feature request."""
         user = get_user('user@gmail.com', 'password')
